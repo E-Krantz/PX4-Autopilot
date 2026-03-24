@@ -129,4 +129,5 @@
         "yaml.schemas": {
                 "${workspaceFolder}/validation/module_schema.yaml": "${workspaceFolder}/src/modules/*/module.yaml"
         },
+        "dotnet.defaultSolution": "src/modules/mavlink/mavlink/pymavlink/generator/C/test/windows/testmav.sln",
 }

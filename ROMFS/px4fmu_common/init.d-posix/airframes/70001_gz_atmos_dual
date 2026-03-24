@@ -152,6 +152,11 @@ param set-default SIM_GZ_EC_MAX10 1900
 param set-default SIM_GZ_EC_MAX11 1900
 param set-default SIM_GZ_EC_MAX12 1900
 
+param set-default SIM_GZ_EC_DIS9 0
+param set-default SIM_GZ_EC_DIS10 0
+param set-default SIM_GZ_EC_DIS11 0
+param set-default SIM_GZ_EC_DIS12 0
+
 # Controller Tunings
 param set SC_YAWRATE_P 3.335
 param set SC_YAWRATE_I 0.87
