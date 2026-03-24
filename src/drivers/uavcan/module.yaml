@@ -85,9 +85,10 @@ actuator_output:
       group_label: 'ESCs'
       channel_label: 'ESC'
       standard_params:
-        min: { min: 0, max: 8191, default: 1 }
-        max: { min: 0, max: 8191, default: 8191 }
-        failsafe: { min: 0, max: 8191 }
+        disarmed: { min: 0, max: 16383, default: 8192 }
+        min: { min: 0, max: 16383, default: 0 }
+        max: { min: 0, max: 16383, default: 16383 }
+        failsafe: { min: 0, max: 16383 }
       num_channels: 12
     - param_prefix: UAVCAN_SV
       group_label: 'Servos'

@@ -99,7 +99,17 @@ void UavcanEscController::update_outputs(float outputs[MAX_ACTUATORS], uint8_t o
 	uavcan::equipment::esc::RawCommand msg{};
 
 	for (unsigned i = 0; i < output_array_size; i++) {
-		msg.cmd.push_back(static_cast<int>(lroundf(outputs[i])));
+		// Map encoded [0, 16383] actuator output to RawCommand [-8192, 8191].
+		int command = static_cast<int>(lroundf(outputs[i])) - 8192;
+
+		if (command > uavcan::equipment::esc::RawCommand::FieldTypes::cmd::RawValueType::max()) {
+			command = uavcan::equipment::esc::RawCommand::FieldTypes::cmd::RawValueType::max();
+
+		} else if (command < uavcan::equipment::esc::RawCommand::FieldTypes::cmd::RawValueType::min()) {
+			command = uavcan::equipment::esc::RawCommand::FieldTypes::cmd::RawValueType::min();
+		}
+
+		msg.cmd.push_back(command);
 	}
 
 	_uavcan_pub_raw_cmd.broadcast(msg);
