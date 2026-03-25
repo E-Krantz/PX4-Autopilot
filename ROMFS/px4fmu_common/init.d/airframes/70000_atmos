@@ -167,10 +167,12 @@ param set-default UAVCAN_EC_FUNC2 302
 param set-default UAVCAN_EC_FUNC3 303
 param set-default UAVCAN_EC_FUNC4 304
 
-param set-default UAVCAN_EC_DIS1 0
-param set-default UAVCAN_EC_DIS2 0
-param set-default UAVCAN_EC_DIS3 0
-param set-default UAVCAN_EC_DIS4 0
+param set-default UAVCAN_EC_BIDIR 15 # bitmask
+
+param set-default UAVCAN_EC_DIS1 8192
+param set-default UAVCAN_EC_DIS2 8192
+param set-default UAVCAN_EC_DIS3 8192
+param set-default UAVCAN_EC_DIS4 8192
 
 param set-default UAVCAN_EC_MIN1 0
 param set-default UAVCAN_EC_MIN2 0
