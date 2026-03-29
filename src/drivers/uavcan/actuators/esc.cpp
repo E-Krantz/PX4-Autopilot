@@ -42,6 +42,7 @@
 #include <parameters/param.h>
 #include <drivers/drv_hrt.h>
 #include <lib/atmosphere/atmosphere.h>
+#include <cmath>
 
 using namespace time_literals;
 
@@ -56,6 +57,12 @@ UavcanEscController::UavcanEscController(uavcan::INode &node) :
 
 int UavcanEscController::init()
 {
+	_uavcan_ec_bidir_h = param_find("UAVCAN_EC_BIDIR");
+
+	if (_uavcan_ec_bidir_h != PARAM_INVALID) {
+		param_get(_uavcan_ec_bidir_h, &_uavcan_ec_bidir_mask);
+	}
+
 	// ESC status subscription
 	int res = _uavcan_sub_status.start(StatusCbBinder(this, &UavcanEscController::esc_status_sub_cb));
 
@@ -85,7 +92,8 @@ int UavcanEscController::init()
 	return res;
 }
 
-void UavcanEscController::update_outputs(float outputs[MAX_ACTUATORS], uint8_t output_array_size)
+void UavcanEscController::update_outputs(float outputs[MAX_ACTUATORS], const uint16_t min_values[MAX_ACTUATORS],
+		const uint16_t max_values[MAX_ACTUATORS], uint8_t output_array_size)
 {
 	// TODO: configurable rate limit
 	const auto timestamp = _node.getMonotonicTime();
@@ -98,8 +106,44 @@ void UavcanEscController::update_outputs(float outputs[MAX_ACTUATORS], uint8_t o
 
 	uavcan::equipment::esc::RawCommand msg{};
 
+	if (_uavcan_ec_bidir_h != PARAM_INVALID) {
+		param_get(_uavcan_ec_bidir_h, &_uavcan_ec_bidir_mask);
+	}
+
 	for (unsigned i = 0; i < output_array_size; i++) {
-		msg.cmd.push_back(static_cast<int>(lroundf(outputs[i])));
+		const int32_t min_cfg = min_values[i];
+		const int32_t max_cfg = max_values[i];
+		const bool bidir_enabled_for_channel = (_uavcan_ec_bidir_mask & (1 << i)) != 0;
+		int command = 0;
+
+		if (max_cfg > min_cfg) {
+			if (bidir_enabled_for_channel) {
+				// Effective range [MIN - (MAX-MIN+1)/2, MAX - (MAX-MIN+1)/2].
+				const int32_t half_span = (max_cfg - min_cfg + 1) / 2;
+				const float cmd = outputs[i] - static_cast<float>(half_span);
+				command = static_cast<int>(lroundf(cmd));
+
+			} else {
+				// Effective range [MIN, MAX] before clamping to forward-only domain.
+				command = static_cast<int>(lroundf(outputs[i]));
+			}
+
+		} else {
+			command = static_cast<int>(lroundf(outputs[i]));
+		}
+
+		if (!bidir_enabled_for_channel && command < 0) {
+			command = 0;
+		}
+
+		if (command > uavcan::equipment::esc::RawCommand::FieldTypes::cmd::RawValueType::max()) {
+			command = uavcan::equipment::esc::RawCommand::FieldTypes::cmd::RawValueType::max();
+
+		} else if (command < uavcan::equipment::esc::RawCommand::FieldTypes::cmd::RawValueType::min()) {
+			command = uavcan::equipment::esc::RawCommand::FieldTypes::cmd::RawValueType::min();
+		}
+
+		msg.cmd.push_back(command);
 	}
 
 	_uavcan_pub_raw_cmd.broadcast(msg);
