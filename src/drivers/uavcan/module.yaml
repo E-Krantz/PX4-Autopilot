@@ -72,16 +72,13 @@ parameters:
         5: Status/Red
         6: Status/Green
         7: Status/Off
-    UAVCAN_EC_BIDIR:
+    UAVCAN_EC_BIDI:
       description:
         short: Enable bidirectional ESC command mapping per channel
         long: |
-          Bitmask that enables bidirectional ESC command mapping per channel.
-          If a channel bit is clear, effective range is [MIN, MAX], then clamped to [0, 8191].
-          If a channel bit is set, effective range is [MIN - (MAX-MIN+1)/2, MAX - (MAX-MIN+1)/2],
-          then clamped to [-8192, 8191].
-          For bidirectional channels, set DIS to the neutral midpoint.
-          Example neutral DIS: MIN=0, MAX=16383 -> DIS=8192.
+          When disabled (default), MIN/MAX/DIS use range [0, 8191].
+          When enabled, MIN/MAX/DIS use range [0, 16383] where DIS defines
+          the zero-thrust center point.
       type: bitmask
       bit:
         0: ESC1
@@ -112,10 +109,10 @@ actuator_output:
       standard_params:
         disarmed: { min: 0, max: 16383, default: 0 }
         min: { min: 0, max: 16383, default: 1 }
-        max: { min: 0, max: 16383, default: 16383 }
+        max: { min: 0, max: 16383, default: 8191 }
         failsafe: { min: 0, max: 16383 }
       custom_params:
-        - name: 'BIDIR'
+        - name: 'BIDI'
           label: 'Bidirectional'
           index_offset: -1
           show_as: bitset

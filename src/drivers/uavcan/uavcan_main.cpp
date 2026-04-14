@@ -1097,8 +1097,7 @@ bool UavcanMixingInterfaceESC::updateOutputs(float outputs[MAX_ACTUATORS], unsig
 		// output_array_size adapts to the highest output index that is mapped (4 for a quad)
 		// this allows for sending less CAN frames depending on what output indices are mapped
 		uint8_t output_array_size = 0;
-		uint16_t min_values[MAX_ACTUATORS]{};
-		uint16_t max_values[MAX_ACTUATORS]{};
+		uint16_t disarmed_values[MAX_ACTUATORS]{};
 
 		for (int i = MAX_ACTUATORS - 1; i >= 0; i--) {
 			if (mixingOutput().isFunctionSet(i)) {
@@ -1108,11 +1107,10 @@ bool UavcanMixingInterfaceESC::updateOutputs(float outputs[MAX_ACTUATORS], unsig
 		}
 
 		for (unsigned i = 0; i < output_array_size; i++) {
-			min_values[i] = mixingOutput().minValue(i);
-			max_values[i] = mixingOutput().maxValue(i);
+			disarmed_values[i] = mixingOutput().disarmedValue(i);
 		}
 
-		_esc_controller.update_outputs(outputs, min_values, max_values, output_array_size);
+		_esc_controller.update_outputs(outputs, disarmed_values, output_array_size);
 	}
 
 	return true;

@@ -166,12 +166,14 @@ param set-default SC_ROLLRATE_D 0.004
 param set-default SC_PITCHRATE_D 0.00
 
 # Propeller Plate
+param set-default UAVCAN_ENABLE 3
+param set-default UAVCAN_BITRATE 500000
+param set-default UAVCAN_EC_BIDI 15
+
 param set-default UAVCAN_EC_FUNC1 301
 param set-default UAVCAN_EC_FUNC2 302
 param set-default UAVCAN_EC_FUNC3 303
 param set-default UAVCAN_EC_FUNC4 304
-
-param set-default UAVCAN_EC_BIDIR 15 # bitmask uavcan1-4 are bidirectional
 
 param set-default UAVCAN_EC_DIS1 8192
 param set-default UAVCAN_EC_DIS2 8192

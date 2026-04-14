@@ -74,8 +74,8 @@ public:
 
 	bool initialized() { return _initialized; };
 
-	void update_outputs(float outputs[MAX_ACTUATORS], const uint16_t min_values[MAX_ACTUATORS],
-			    const uint16_t max_values[MAX_ACTUATORS], uint8_t output_array_size);
+	void update_outputs(float outputs[MAX_ACTUATORS], const uint16_t disarmed_values[MAX_ACTUATORS],
+			    uint8_t output_array_size);
 
 	/**
 	 * Sets the number of rotors and enable timer
@@ -136,8 +136,8 @@ private:
 	uavcan::Subscriber<uavcan::equipment::esc::Status, StatusCbBinder>	_uavcan_sub_status;
 	uavcan::Subscriber<uavcan::equipment::esc::StatusExtended, StatusExtendedCbBinder> _uavcan_sub_status_extended;
 
-	param_t _uavcan_ec_bidir_h{PARAM_INVALID};
-	int32_t _uavcan_ec_bidir_mask{0};
+	param_t _uavcan_ec_bidi_h{PARAM_INVALID};
+	int32_t _uavcan_ec_bidi_mask{0};
 
 	NodeInfoPublisher *_node_info_publisher{nullptr};
 };
