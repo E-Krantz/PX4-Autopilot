@@ -105,10 +105,6 @@ void UavcanEscController::update_outputs(float outputs[MAX_ACTUATORS], const uin
 
 	uavcan::equipment::esc::RawCommand msg{};
 
-	if (_uavcan_ec_bidi_h != PARAM_INVALID) {
-		param_get(_uavcan_ec_bidi_h, &_uavcan_ec_bidi_mask);
-	}
-
 	for (unsigned i = 0; i < output_array_size; i++) {
 		const bool bidi_enabled_for_channel = (_uavcan_ec_bidi_mask & (1 << i)) != 0;
 		int command = static_cast<int>(lroundf(outputs[i]));

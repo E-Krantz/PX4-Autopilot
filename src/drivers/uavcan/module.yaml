@@ -94,6 +94,7 @@ parameters:
         10: ESC11
         11: ESC12
       default: 0
+      reboot_required: true
 actuator_output:
   show_subgroups_if: 'UAVCAN_ENABLE>=3'
   config_parameters:
